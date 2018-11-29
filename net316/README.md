@@ -9,8 +9,8 @@
 ![](images/overlapping_ip.png)
 
 - In this session, we will connect two VPCs with overlapping IP addresses by building two solutions:
-  1. [AWS PrivateLink](https://aws.amazon.com/privatelink/)
-  2. [Software VPN and NAT](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html)
+  - [AWS PrivateLink](https://aws.amazon.com/privatelink/)
+  - [Software VPN and NAT](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html)
 - We then analyze the design tradeoffs of each approach
 
 ## Prerequisites:
