@@ -130,13 +130,13 @@ aws elbv2 create-target-group \
 ```
 aws elbv2 register-targets \
 --target-group-arn <target group arn from step(2)> \
---targets Id=<instance1-id instance2-id instance3-id> \
+--targets Id=<Webserver1-id> Id=<Webserver2-id> Id=<Webserver3-id> \
 --region eu-west-1
 ```
 
 4. Create listener:
 ```
-awsws elbv2 create-listener \
+aws elbv2 create-listener \
 --load-balancer-arn <nlb-arn from step(1)> \
 --protocol TCP \
 --port 80 \
