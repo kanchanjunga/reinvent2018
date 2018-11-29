@@ -1,12 +1,12 @@
 # Software VPN and NAT:
 
-- A Virtual Private Network (VPN) connection allows you to extend private network over public network. In AWS,[Software VPN](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html){:target="_blank"} refers to VPN connection using a software VPN appliance running in your Amazon VPC network.
+- A Virtual Private Network (VPN) connection allows you to extend private network over public network. In AWS,[Software VPN](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html) refers to VPN connection using a software VPN appliance running in your Amazon VPC network.
 
 - Network Address Translator (NAT) translates one IP address into another by modifying network address in the IP header of packets in transit through a routing device.
 
 ## Objective:
 
-- In this session we will use [Software VPN](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html){:target="_blank"} and NAT to connect to VPCs with overlapping IP address
+- In this session we will use [Software VPN](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html) and NAT to connect to VPCs with overlapping IP address
 
 ![](images/softwareVpn_nat.png)
 
@@ -55,7 +55,7 @@
 
 #### Install:
 
-- If you don't have AWS CLI installed or don't have up to date version, follow installion/upgrade instruction found [here](){:target="_blank"}
+- If you don't have AWS CLI installed or don't have up to date version, follow installion/upgrade instruction found [here]()
 
 
 #### Configure:
@@ -79,12 +79,16 @@ Default output format [None]: json --> format of your choice
 
 ### Create underlying infrastructure using AWS CloudFormation:
 
-- Launch [Software VPN and NAT AWS CloudFormation Template](){:target="_blank"} to create:
+- Launch [Software VPN and NAT AWS CloudFormation Template in eu-west-1 (Ireland) region](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?templateURL=https://s3-eu-west-1.amazonaws.com/net316-builder-session-eu-west-1/net316SoftwareVPNAndNat.json) to create:
   - 2 VPC: NET316: VPC A and NET316: VPC B
   - 2 public subnets, one in each VPC
   - 2 route tables, one in each VPC
   - 2 security groups, one in each VPC
   - 2 EC2 instances, one in each VPC
+
+#### AWS CloudFormation Templates used to create above resources can be found here:
+
+- [Software VPN and NAT AWS CloudFormation Template](https://s3-eu-west-1.amazonaws.com/net316-builder-session-eu-west-1/net316SoftwareVPNAndNat.json)
 
 ### Configure IPsec and iptabls on NET316: VPC A EC2 instance:
 
@@ -100,6 +104,9 @@ yum update all -y
 
 - Configure IP forwarding:
 ```
+sysctl -w net.ipv4.ip_forward = 1
+sysctl -w net.ipv4.conf.all.accept_redirects = 0
+sysctl -w net.ipv4.conf.all.send_redirects = 0
 ```
 
 - Install IP tables:
@@ -144,7 +151,7 @@ conn vpcA-to-vpcB
   type=tunnel
   esp=aes_gcm128-null
   mtu=1436
-  left=10.0.0.11
+  left=10.0.1.11
   leftid=52.212.20.244
   leftsubnet=192.168.1.0/24
   right=54.154.85.125
@@ -168,6 +175,15 @@ iptables -t nat -A PREROUTING -d 192.168.1.11/32 -j DNAT —to-destination 10.0.
 [root@ip-10-0-0-11 ec2-user]# iptables -t nat -A POSTROUTING -s 10.0.0.11/32 -d 192.168.2.0/24 -j SNAT —to-source 192.168.1.11
 ```
 
+- Edit route table so that traffic destined for 192.168.2.0/24 traverses through Vpnserver1:
+
+```
+aws ec2 create-route \
+--route-table-id <NET316-VPN-NAT: VPC A route table id> \
+--destination-cidr-block 192.168.2.0/24 \
+--gateway-id <NET316-VPN-NAT: Vpnserver1's ENI>
+```
+
 ### Configure IPsec and iptabls on NET316: VPC B EC2 instance:
 
 - configuratio needs to be performed as root:
@@ -182,6 +198,9 @@ yum update all -y
 
 - Configure IP forwarding:
 ```
+sysctl -w net.ipv4.ip_forward = 1
+sysctl -w net.ipv4.conf.all.accept_redirects = 0
+sysctl -w net.ipv4.conf.all.send_redirects = 0
 ```
 
 - Install IP tables:
@@ -223,7 +242,7 @@ conn vpcB-to-vpcA
   type=tunnel
   esp=aes_gcm128-null
   mtu=1436
-  left=10.0.0.11
+  left=10.0.1.11
   leftid=54.154.85.125
   leftsubnet=192.168.2.0/24
   right=52.212.20.244
@@ -245,6 +264,14 @@ $:
 ```
 iptables -t nat -A PREROUTING -d 192.168.2.11/32 -j DNAT —to-destination 10.0.0.11
 [root@ip-10-0-0-11 ec2-user]# iptables -t nat -A POSTROUTING -s 10.0.0.11/32 -d 192.168.1.0/24 -j SNAT —to-source 192.168.2.11
+```
+
+- Edit route table so that traffic destined for 192.168.1.0/24 traverses through Vpnserver2:
+```
+aws ec2 create-route \
+--route-table-id <NET316-VPN-NAT: VPC B route table id> \
+--destination-cidr-block 192.168.1.0/24 \
+--gateway-id <NET316-VPN-NAT: Vpnserver2's ENI>
 ```
 
 ### Verification: NET316: VPC A EC2 Instance
@@ -325,7 +352,7 @@ $:
 
 ### Clean up (delete AWS resources):
 
-1. Delete [Software VPN and NAT AWS CloudFormation Template](){:target="_blank"}
+1. Delete [Software VPN and NAT AWS CloudFormation Template]()
 
 
 ## Considerations:

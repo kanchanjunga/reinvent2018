@@ -1,12 +1,12 @@
 # AWS PrivateLink:
 
-- [AWS PrivateLink](https://aws.amazon.com/privatelink/){:target="_blank"} enables service consumer to privately connect their VPC to supported AWS services, AWS Marketplace partner services and services hosted by other AWS customers and partners in their own VPCs without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection.
+- [AWS PrivateLink](https://aws.amazon.com/privatelink/) enables service consumer to privately connect their VPC to supported AWS services, AWS Marketplace partner services and services hosted by other AWS customers and partners in their own VPCs without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection.
 
 - You can create your own application in your VPC and configure it as an AWS PrivateLink-powered services. Other AWS principals can create a connection from their VPC to your VPC endpoint service using interface VPC endpoint.
 
 ## Objective:
 
-- In this we will focus on creating your own [VPC Endpoint Service](https://docs.aws.amazon.com/vpc/latest/userguide/endpoint-service.html){:target="_blank"} in your own VPC and allowing other business units (AWS principals) to create [Interface VPC Endpoint](https://docs.aws.amazon.com/vpc/latest/userguide/vpce-interface.html){:target="_blank"} connection from their VPC to VPC Endpoint Service.
+- In this we will focus on creating your own [VPC Endpoint Service](https://docs.aws.amazon.com/vpc/latest/userguide/endpoint-service.html) in your own VPC and allowing other business units (AWS principals) to create [Interface VPC Endpoint](https://docs.aws.amazon.com/vpc/latest/userguide/vpce-interface.html) connection from their VPC to VPC Endpoint Service.
   - We will call VPC hosting the service as the service provider VPC and VPC consuming the service as service consumer VPC
 
 - Service provider VPC and service consumer VPC will have overlapping IP address.
@@ -63,7 +63,7 @@
 
 #### Install:
 
-If you don't have AWS CLI installed or don't have up to date version, follow installion/upgrade instruction found [here](){:target="_blank"}.
+If you don't have AWS CLI installed or don't have up to date version, follow installion/upgrade instruction found [here]().
 
 #### Configure:
 
@@ -86,18 +86,23 @@ Default output format [None]: json --> format of your choice
 
 ### Create underlying infrastructure using AWS CloudFormation:
 
-- Launch [Service Provider AWS CloudFormation Template](){:target="_blank"} to create:
+- Launch [Service Provider AWS CloudFormation Template in eu-west-1 (Ireland) region](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?templateURL=https://s3-eu-west-1.amazonaws.com/net316-builder-session-eu-west-1/net316ServiceProvider.json) to create:
   - VPC
   - subnets
   - route table
   - security group
   - EC2 instances with webserver
-- Launch [Service Consumer AWS CloudFormation Template](){:target="_blank"} to create:
+- Launch [Service Consumer AWS CloudFormation Template in eu-west-1 (Ireland) region](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?templateURL=https://s3-eu-west-1.amazonaws.com/net316-builder-session-eu-west-1/net316ServiceConsumer.json) to create:
   - VPC
   - subnet
   - route table
   - security group
   - EC2 instance
+
+#### AWS CloudFormation Templates used to create above resources can be found here:
+
+- [Service Provider AWS CloudFormation Template](https://s3-eu-west-1.amazonaws.com/net316-builder-session-eu-west-1/net316ServiceProvider.json)
+- [Service Consumer AWS CloudFormation Template](https://s3-eu-west-1.amazonaws.com/net316-builder-session-eu-west-1/net316ServiceConsumer.json)
 
 ### Create VPC Endpoint Service (hosting your service)
 
@@ -182,7 +187,7 @@ curl <vpc-endpoint-dns-name from step(1)>
 #### In Service Consumer environment:
 
     1. Delete VPC Endpoint
-    2. Delete [Service Consumer AWS CloudFormation Template](){:target="_blank"}
+    2. Delete [Service Consumer AWS CloudFormation Template]()
 
 #### In Service Provider environment:
 
@@ -190,7 +195,7 @@ curl <vpc-endpoint-dns-name from step(1)>
     2. Delete Listener
     3. Delete Target Group
     4. Delete AWS Network Load Balancer
-    5. Delete [Service Provider AWS CloudFormation Template](){:target="_blank"}
+    5. Delete [Service Provider AWS CloudFormation Template]()
 
 ## Considerations:
 
