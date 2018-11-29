@@ -2,15 +2,15 @@
 
 ## Introduction
 
-- We often run into a situation where we need to connect two VPCs. [AWS VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html){:target="_blank"} is one of the common ways to connect two VPCs
+- We often run into a situation where we need to connect two VPCs. [AWS VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html) is one of the common ways to connect two VPCs
 
-- [AWS VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html){:target="_blank"} does not allow certain configuration patterns and overlapping IP address is one of the disallowed pattern. As described in the image below, if two VPCs have same CIDR, they cannot be peered.
+- [AWS VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html) does not allow certain configuration patterns and overlapping IP address is one of the disallowed pattern. As described in the image below, if two VPCs have same CIDR, they cannot be peered.
 
 ![](images/overlapping_ip.png)
 
 - In this session, we will connect two VPCs with overlapping IP addresses by building two solutions:
-  1. [AWS PrivateLink](https://aws.amazon.com/privatelink/){:target="_blank"}
-  2. [Software VPN and NAT](){:target="_blank"}
+  1. [AWS PrivateLink](https://aws.amazon.com/privatelink/)
+  2. [Software VPN and NAT](https://docs.aws.amazon.com/aws-technical-content/latest/aws-vpc-connectivity-options/software-vpn-amazon-to-amazon.html)
 - We then analyze the design tradeoffs of each approach
 
 ## Prerequisites:
