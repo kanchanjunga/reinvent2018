@@ -104,9 +104,9 @@ yum update all -y
 
 - Configure IP forwarding:
 ```
-sysctl -w net.ipv4.ip_forward = 1
-sysctl -w net.ipv4.conf.all.accept_redirects = 0
-sysctl -w net.ipv4.conf.all.send_redirects = 0
+sysctl -w net.ipv4.ip_forward=1
+sysctl -w net.ipv4.conf.all.accept_redirects=0
+sysctl -w net.ipv4.conf.all.send_redirects=0
 ```
 
 - Install IP tables:
@@ -134,7 +134,7 @@ yum info libreswan
 systemctl stop ipsec
 rm /etc/ipsec.d/*db
 ipsec initnss
-systemctl stop ipsec
+systemctl start ipsec
 ```
 
 - Generate random key for ipsec secrets config, same key will be used on both the instances:

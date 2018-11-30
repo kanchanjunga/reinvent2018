@@ -146,7 +146,7 @@ aws elbv2 create-listener \
 
 5. Create VPC Endpoint Service:
 ```
-aws vpcev2 create-vpc-endpoint-service-configuration \
+aws ec2 create-vpc-endpoint-service-configuration \
 --network-load-balancer-arn <nlb-arn from step(1)> \
 --no-acceptance-required \
 --region eu-west-1
@@ -154,7 +154,7 @@ aws vpcev2 create-vpc-endpoint-service-configuration \
 
 6. Describe/view VPC Endpoint Service configuration:
 ```
-aws vpcev2 describe-vpc-endpoint-services \
+aws ec2 describe-vpc-endpoint-services \
 --service-name  <Service ARN from step(50> \
 --region eu-west-1
 ```
@@ -164,16 +164,19 @@ aws vpcev2 describe-vpc-endpoint-services \
 1. Create Interface VPC Endpoint
    - Create the endpoing in the same subnet as the EC2 instance:
 ```
-aws vpcev2 create-vpc-endpoint \
+aws ec2 create-vpc-endpoint \
 --vpc-endpoint-type Interface \
 --service-name <Service ARN from step(5)> \
 --subnet-id <subnet-id1> \
---vpc-id <vpc-id>
+--vpc-id <net316 service consumer vpc-id> \
+--security-group-ids <net316-service-consumer-security-group-id> \
 --region eu-west-1
 ```
 
 2. Dscribe/view VPC Endpoint configuration:
 ```
+awsws ec2 describe-vpc-endpoints \
+--vpc-endpoint-ids <vpc-endpoint-id created above> --region eu-west-1
 ```
 
 3. Access the service:
@@ -186,24 +189,55 @@ curl <vpc-endpoint-dns-name from step(1)>
 
 #### In Service Consumer environment:
 
-    1. Delete VPC Endpoint
-    2. Delete [Service Consumer AWS CloudFormation Template]()
+1. Delete VPC Endpoint
+```
+awsws ec2 delete-vpc-endpoints \
+--vpc-endpoint-ids <vpc-endpoint-id> \
+--region eu-west-1
+```
+
+2. Delete [Service Consumer AWS CloudFormation Template](https://eu-west-1.console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks)
 
 #### In Service Provider environment:
 
-    1. Delete VPC Endpoint Service
-    2. Delete Listener
-    3. Delete Target Group
-    4. Delete AWS Network Load Balancer
-    5. Delete [Service Provider AWS CloudFormation Template]()
+1. Delete VPC Endpoint Service:
+```
+aws ec2 delete-vpc-endpoint-service-configurations \
+--service-ids <vpce-endpoint-service-id> \
+--region eu-west-1
+```
+
+2. Delete Listener
+
+```
+aws elbv2 delete-listener \
+--listener-arn <listener-arn> \
+--region eu-west-1
+```
+
+3. Delete Target Group
+```
+aws elbv2 delete-target-group \
+--target-group-arn <target-group-arn> \
+--region eu-west-1
+```
+
+4. Delete AWS Network Load Balancer
+```
+aws elbv2 delete-load-balancer \
+--load-balancer-arn <nlb-load-balancer-ar> \
+--region eu-west-1
+```
+
+5. Delete [Service Provider AWS CloudFormation Template](https://eu-west-1.console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks)
 
 ## Considerations:
 
 - Works with overlapping ip address
 - Only service consumer (client) can intiate the connection. Strict Client to Server Access
-- A single service that you want to share to many VPCs
+- A single service you want to share to many VPCs, but may lack control or trust of the consumers
 - Scales to thousands of consumers
 - Simple to setup. Do not require NAT, IGW, VPN or DX
 - Traffic stays private, does not traverse internet
-A single service you want to share to many VPCs, but may lack control or trust of the consumers
+- As of now supports only TCP
 
